@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:game_tumbang_preso/core/app_theme.dart';
+import 'package:game_tumbang_preso/ui/welcome/welcome_screen.dart';
 
 void main() {
-  runApp(const MainApp());
+  runApp(const TumbangPresoApp());
 }
 
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+class TumbangPresoApp extends StatelessWidget {
+  const TumbangPresoApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(body: Center(child: Text('Hello World!'))),
+    return MaterialApp(
+      title: 'Tumbang Preso',
+      debugShowCheckedModeBanner: false,
+      theme: buildAppTheme(),
+      home: const WelcomeScreen(),
     );
   }
 }
