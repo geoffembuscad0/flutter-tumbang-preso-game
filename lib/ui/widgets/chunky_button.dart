@@ -65,12 +65,15 @@ class _ChunkyButtonState extends State<ChunkyButton> {
                   Icon(widget.icon, color: foreground, size: 26),
                   const SizedBox(width: 10),
                 ],
-                Text(
-                  widget.label,
-                  style: TextStyle(
-                    color: foreground,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w800,
+                Flexible(
+                  child: Text(
+                    widget.label,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: foreground,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w800,
+                    ),
                   ),
                 ),
               ],
