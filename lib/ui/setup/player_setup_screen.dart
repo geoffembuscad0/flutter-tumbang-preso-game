@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:game_tumbang_preso/core/app_theme.dart';
 import 'package:game_tumbang_preso/domain/domain.dart';
+import 'package:game_tumbang_preso/state/game_controller.dart';
 import 'package:game_tumbang_preso/ui/coin_toss/coin_toss_screen.dart';
 import 'package:game_tumbang_preso/ui/widgets/chunky_button.dart';
 import 'package:game_tumbang_preso/ui/widgets/chunky_card.dart';
@@ -79,8 +80,11 @@ class _PlayerSetupScreenState extends State<PlayerSetupScreen> {
       firstChoice: _firstChoice,
       secondName: _secondController.text,
     );
+    final controller = GameController.newGame(players: players);
     Navigator.of(context).push(
-      MaterialPageRoute<void>(builder: (_) => CoinTossScreen(players: players)),
+      MaterialPageRoute<void>(
+        builder: (_) => CoinTossScreen(controller: controller),
+      ),
     );
   }
 
