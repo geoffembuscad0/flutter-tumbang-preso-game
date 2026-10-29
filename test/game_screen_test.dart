@@ -23,6 +23,30 @@ GameController _startedGame({List<bool> rolls = const []}) {
   return controller;
 }
 
+// A game dropped straight into [phase], for the screens at the end of a game.
+GameController _gameAt(
+  GamePhase phase, {
+  Scores scores = const Scores(),
+  TieBreakerState? tieBreaker,
+  PlayerId? winner,
+}) {
+  return GameController(
+    GameEngine(
+      players: _players,
+      initialState: GameState(
+        players: _players,
+        phase: phase,
+        scores: scores,
+        attacker: PlayerId.one,
+        captureAttemptsLeft: 3,
+        tieBreaker: tieBreaker,
+        winner: winner,
+        winMethod: winner == null ? null : WinMethod.reachedTarget,
+      ),
+    ),
+  );
+}
+
 Future<void> _pumpGame(WidgetTester tester, GameController controller) {
   return tester.pumpWidget(
     MaterialApp(
@@ -49,7 +73,7 @@ void main() {
     expect(find.text('Taya'), findsOneWidget);
     expect(_score(tester, 'score-one'), '0');
     expect(_score(tester, 'score-two'), '0');
-    expect(find.text('Ana throws next.'), findsOneWidget);
+    expect(find.text('Ana’s throw'), findsOneWidget);
     expect(find.text('Ben’s capture attempts left: 3'), findsOneWidget);
   });
 
@@ -62,6 +86,54 @@ void main() {
     await tester.pump();
 
     expect(_score(tester, 'score-one'), '1');
-    expect(find.text('Ben responds next.'), findsOneWidget);
+    expect(find.text('Hit!'), findsOneWidget);
+    expect(find.byKey(const Key('pass-device')), findsOneWidget);
+  });
+
+  testWidgets('follows the controller through the handoff on its own', (
+    tester,
+  ) async {
+    final controller = _startedGame(rolls: [true]);
+    await _pumpGame(tester, controller);
+
+    controller.throwSlipper();
+    controller.continueFromThrow();
+    await tester.pump(const Duration(milliseconds: 500));
+
+    expect(find.text('Pass the device to Ben'), findsOneWidget);
+    expect(find.byKey(const Key('guard-can')), findsNothing);
+
+    controller.confirmHandoff();
+    await tester.pump(const Duration(milliseconds: 500));
+
+    expect(find.byKey(const Key('guard-can')), findsOneWidget);
+  });
+
+  testWidgets('shows the Jack-en-Poy placeholder when both reach the target', (
+    tester,
+  ) async {
+    await _pumpGame(
+      tester,
+      _gameAt(
+        GamePhase.tieBreaker,
+        scores: const Scores(10, 10),
+        tieBreaker: const TieBreakerState(),
+      ),
+    );
+
+    expect(find.text('Jack-en-Poy'), findsOneWidget);
+  });
+
+  testWidgets('shows the winner when the game is finished', (tester) async {
+    await _pumpGame(
+      tester,
+      _gameAt(
+        GamePhase.finished,
+        scores: const Scores(10, 4),
+        winner: PlayerId.one,
+      ),
+    );
+
+    expect(find.text('Ana wins!'), findsOneWidget);
   });
 }

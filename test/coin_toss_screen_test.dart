@@ -186,7 +186,7 @@ void main() {
 
       expect(find.text('Game on'), findsOneWidget);
       expect(find.text('Coin toss'), findsNothing);
-      expect(find.text('Ben throws next.'), findsOneWidget);
+      expect(find.text('Ben’s throw'), findsOneWidget);
     });
   });
 
