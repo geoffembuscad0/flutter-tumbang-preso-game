@@ -9,16 +9,16 @@ import 'package:game_tumbang_preso/ui/widgets/chunky_card.dart';
 import 'package:game_tumbang_preso/ui/widgets/player_id_label.dart';
 import 'package:game_tumbang_preso/ui/widgets/sky_background.dart';
 
-/// Longest name the text fields accept. A UI limit only, so names fit on the
-/// scoreboard; the domain layer has no maximum.
+// Longest name the text fields accept. A UI limit only, so names fit on the
+// scoreboard; the domain layer has no maximum.
 const int _maxNameLength = 20;
 
 const String _blankMessage = 'Please enter a name.';
 const String _duplicateMessage = 'Use a different name from the first player.';
 
-/// Player setup (spec section 3): the first participant enters a name and
-/// picks Player 1 or Player 2, the second participant enters a name and gets
-/// the other number, then the game moves on to the coin toss.
+// Player setup (spec section 3): the first participant enters a name and
+// picks Player 1 or Player 2, the second participant enters a name and gets
+// the other number, then the game moves on to the coin toss.
 class PlayerSetupScreen extends StatefulWidget {
   const PlayerSetupScreen({super.key});
 
@@ -34,8 +34,8 @@ class _PlayerSetupScreenState extends State<PlayerSetupScreen> {
 
   PlayerId _firstChoice = PlayerId.one;
 
-  /// Blank-name errors stay hidden until the person tries to continue, so
-  /// the form does not scold them before they have typed anything.
+  // Blank-name errors stay hidden until the person tries to continue, so
+  // the form does not scold them before they have typed anything.
   bool _attempted = false;
 
   @override
@@ -55,8 +55,8 @@ class _PlayerSetupScreenState extends State<PlayerSetupScreen> {
 
   String? get _firstError => _attempted && _firstBlank ? _blankMessage : null;
 
-  /// A duplicate is reported as soon as both names are typed, because it is
-  /// unambiguous; a blank is only reported after the first attempt.
+  // A duplicate is reported as soon as both names are typed, because it is
+  // unambiguous; a blank is only reported after the first attempt.
   String? get _secondError {
     if (_attempted && _secondBlank) return _blankMessage;
     if (_problem == NameProblem.duplicate) return _duplicateMessage;
@@ -344,7 +344,7 @@ class _NameField extends StatelessWidget {
   }
 }
 
-/// One selectable choice in the Player 1 / Player 2 picker.
+// One selectable choice in the Player 1 / Player 2 picker.
 class _IdentityTile extends StatelessWidget {
   const _IdentityTile({
     super.key,
@@ -407,7 +407,7 @@ class _IdentityTile extends StatelessWidget {
   }
 }
 
-/// Read-only chip showing the identity the second participant was given.
+// Read-only chip showing the identity the second participant was given.
 class _AssignedBadge extends StatelessWidget {
   const _AssignedBadge({super.key, required this.label});
 
