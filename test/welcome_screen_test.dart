@@ -15,14 +15,21 @@ void main() {
   });
 
   testWidgets('How to Play opens and closes', (tester) async {
+    final gotItButton = find.text('Got it');
     await tester.pumpWidget(const TumbangPresoApp());
 
     await tester.tap(find.text('How to Play'));
     await tester.pump(_transition);
     expect(find.text('How to play'), findsOneWidget);
 
-    await tester.ensureVisible(find.text('Got it'));
-    await tester.tap(find.text('Got it'));
+    await tester.ensureVisible(gotItButton); // Added fix to address the  issue where that the dialog's content is scrollable and the test hasn't correctly positioned the button within the viewport before tapping it.
+    await tester.pump();
+
+    expect(gotItButton, findsOneWidget);
+    expect(tester.getRect(gotItButton), 
+        anyOf(isNotNull, isNot(const Rect.fromLTWH(0, 0, 0, 0))));
+
+    await tester.tap(gotItButton);
     await tester.pump(_transition);
     expect(find.text('How to play'), findsNothing);
   });
