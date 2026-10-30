@@ -10,20 +10,24 @@ import 'package:game_tumbang_preso/ui/widgets/player_id_label.dart';
 /// It draws whatever [state] it is given, so a stage can show an earlier
 /// snapshot while a result is still being revealed.
 class Scoreboard extends StatelessWidget {
-  const Scoreboard({super.key, required this.state});
+  const Scoreboard({super.key, required this.state, this.showRoles = true});
 
   final GameState state;
 
+  // Whether to show each player's role and the taya's capture attempts.
+  // They mean nothing during the Jack-en-Poy tie-breaker or at the end.
+  final bool showRoles;
+
   @override
   Widget build(BuildContext context) {
-    final taya = state.taya;
+    final taya = showRoles ? state.taya : null;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _PlayerCard(state: state, id: PlayerId.one),
+        _PlayerCard(state: state, id: PlayerId.one, showRoles: showRoles),
         const SizedBox(height: 12),
-        _PlayerCard(state: state, id: PlayerId.two),
+        _PlayerCard(state: state, id: PlayerId.two, showRoles: showRoles),
         if (taya != null) ...[
           const SizedBox(height: 12),
           Center(
@@ -52,15 +56,20 @@ class Scoreboard extends StatelessWidget {
 }
 
 class _PlayerCard extends StatelessWidget {
-  const _PlayerCard({required this.state, required this.id});
+  const _PlayerCard({
+    required this.state,
+    required this.id,
+    required this.showRoles,
+  });
 
   final GameState state;
   final PlayerId id;
+  final bool showRoles;
 
   @override
   Widget build(BuildContext context) {
     final attacker = state.attacker;
-    final role = attacker == null
+    final role = !showRoles || attacker == null
         ? null
         : (attacker == id ? 'Attacker' : 'Taya');
     final key = Key(id == PlayerId.one ? 'score-one' : 'score-two');

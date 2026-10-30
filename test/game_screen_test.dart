@@ -109,7 +109,7 @@ void main() {
     expect(find.byKey(const Key('guard-can')), findsOneWidget);
   });
 
-  testWidgets('shows the Jack-en-Poy placeholder when both reach the target', (
+  testWidgets('starts the Jack-en-Poy handoff when both reach the target', (
     tester,
   ) async {
     await _pumpGame(
@@ -122,6 +122,8 @@ void main() {
     );
 
     expect(find.text('Jack-en-Poy'), findsOneWidget);
+    expect(find.text('Pass the device to Ana'), findsOneWidget);
+    expect(find.byKey(const Key('hand-rock')), findsNothing);
   });
 
   testWidgets('shows the winner when the game is finished', (tester) async {

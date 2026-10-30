@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:game_tumbang_preso/domain/domain.dart';
+import 'package:game_tumbang_preso/state/tie_breaker_step.dart';
 import 'package:game_tumbang_preso/state/turn_step.dart';
 
 // Connects the [GameEngine] to the UI.
@@ -44,6 +45,7 @@ class GameController extends ChangeNotifier {
   final GameEngine _engine;
   List<GameEvent> _lastEvents = const [];
   TurnStep _step = TurnStep.throwing;
+  TieBreakerStep _tieBreakerStep = TieBreakerStep.handoffFirst;
 
   GameState get state => _engine.state;
 
@@ -53,6 +55,11 @@ class GameController extends ChangeNotifier {
 
   // What the shared device is waiting for in the current exchange.
   TurnStep get step => _step;
+
+  // Where the current Jack-en-Poy round stands on the shared device. Only
+  // meaningful while the engine is in its tie-breaker phase (or just after it
+  // has been decided, while the last round is still being shown).
+  TieBreakerStep get tieBreakerStep => _tieBreakerStep;
 
   // Events produced by the most recent engine command; empty before the
   // first one.
@@ -88,8 +95,35 @@ class GameController extends ChangeNotifier {
     );
   }
 
-  List<GameEvent> submitTieBreakerHand(PlayerId player, Hand hand) =>
-      _runEngine(() => _engine.submitTieBreakerHand(player, hand));
+  // Locks in the hand of whoever is picking: Player 1 at
+  // [TieBreakerStep.firstPick], Player 2 at [TieBreakerStep.secondPick]. The
+  // controller works out which, so a screen cannot lock a hand for the wrong
+  // player, and it is rejected at every other step (including before the
+  // handoff is confirmed). The events never include the hand itself until
+  // both are locked.
+  List<GameEvent> lockHand(Hand hand) {
+    final step = _tieBreakerStep;
+    final PlayerId player;
+    final TieBreakerStep next;
+    switch (step) {
+      case TieBreakerStep.firstPick:
+        player = PlayerId.one;
+        next = TieBreakerStep.handoffSecond;
+      case TieBreakerStep.secondPick:
+        player = PlayerId.two;
+        next = TieBreakerStep.roundResult;
+      case TieBreakerStep.handoffFirst:
+      case TieBreakerStep.handoffSecond:
+      case TieBreakerStep.roundResult:
+        throw InvalidGameActionException(
+          'Expected a hand pick but the device is at ${step.name}.',
+        );
+    }
+    return _runEngine(
+      () => _engine.submitTieBreakerHand(player, hand),
+      nextTieBreaker: next,
+    );
+  }
 
   // --- Step transitions (no engine events) ------------------------------
 
@@ -118,15 +152,41 @@ class GameController extends ChangeNotifier {
     _setStep(TurnStep.throwing);
   }
 
+  // --- Tie-breaker step transitions (no engine events) --------------------
+
+  // Player 1 confirms they are holding the device. This is the only way into
+  // [TieBreakerStep.firstPick].
+  void confirmFirstHandoff() {
+    _requireTieBreakerStep(TieBreakerStep.handoffFirst);
+    _setTieBreakerStep(TieBreakerStep.firstPick);
+  }
+
+  // Player 2 confirms they are holding the device. This is the only way into
+  // [TieBreakerStep.secondPick].
+  void confirmSecondHandoff() {
+    _requireTieBreakerStep(TieBreakerStep.handoffSecond);
+    _setTieBreakerStep(TieBreakerStep.secondPick);
+  }
+
+  // Leaves the round result. After a draw the engine has already started the
+  // next round, so this sends the device back to Player 1; after a win the
+  // screen shows the winner, read from [state].
+  void continueFromRound() {
+    _requireTieBreakerStep(TieBreakerStep.roundResult);
+    _setTieBreakerStep(TieBreakerStep.handoffFirst);
+  }
+
   // --- Internals ---------------------------------------------------------
 
   List<GameEvent> _runEngine(
     List<GameEvent> Function() command, {
     TurnStep? next,
+    TieBreakerStep? nextTieBreaker,
   }) {
     final events = List<GameEvent>.unmodifiable(command());
     _lastEvents = events;
     if (next != null) _step = next;
+    if (nextTieBreaker != null) _tieBreakerStep = nextTieBreaker;
     notifyListeners();
     return events;
   }
@@ -134,6 +194,20 @@ class GameController extends ChangeNotifier {
   void _setStep(TurnStep next) {
     _step = next;
     notifyListeners();
+  }
+
+  void _setTieBreakerStep(TieBreakerStep next) {
+    _tieBreakerStep = next;
+    notifyListeners();
+  }
+
+  void _requireTieBreakerStep(TieBreakerStep expected) {
+    if (_tieBreakerStep != expected) {
+      throw InvalidGameActionException(
+        'Expected tie-breaker step ${expected.name} but the device is at '
+        '${_tieBreakerStep.name}.',
+      );
+    }
   }
 
   void _requireStep(TurnStep expected) {

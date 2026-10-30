@@ -132,3 +132,78 @@ OutcomeSummary summarizeResponse(
 
   return OutcomeSummary(headline: headline, details: details);
 }
+
+/// "Rock", "Paper" or "Scissors", for display.
+String handName(Hand hand) => switch (hand) {
+  Hand.rock => 'Rock',
+  Hand.paper => 'Paper',
+  Hand.scissors => 'Scissors',
+};
+
+String _beatsPhrase(Hand winner) => switch (winner) {
+  Hand.rock => 'Rock breaks Scissors.',
+  Hand.paper => 'Paper covers Rock.',
+  Hand.scissors => 'Scissors cut Paper.',
+};
+
+/// A resolved Jack-en-Poy round, ready to reveal (spec 7.1, steps 3 to 6).
+class RoundSummary {
+  const RoundSummary({
+    required this.round,
+    required this.player1Hand,
+    required this.player2Hand,
+    required this.winner,
+    required this.headline,
+    required this.details,
+  });
+
+  final int round;
+  final Hand player1Hand;
+  final Hand player2Hand;
+
+  /// Null means a draw, and another round follows.
+  final PlayerId? winner;
+
+  final String headline;
+  final List<String> details;
+
+  bool get isDraw => winner == null;
+}
+
+/// Describes the round that the last tie-breaker command resolved.
+RoundSummary summarizeTieBreakerRound(List<GameEvent> events, Players players) {
+  TieBreakerRoundResolved? resolved;
+  for (final event in events) {
+    if (event is TieBreakerRoundResolved) resolved = event;
+  }
+  if (resolved == null) {
+    throw StateError('The events contain no resolved Jack-en-Poy round.');
+  }
+
+  final winner = resolved.winner;
+  if (winner == null) {
+    return RoundSummary(
+      round: resolved.round,
+      player1Hand: resolved.player1Hand,
+      player2Hand: resolved.player2Hand,
+      winner: null,
+      headline: 'Draw!',
+      details: [
+        'Both chose ${handName(resolved.player1Hand)}.',
+        'Nobody wins this round, so you go again.',
+      ],
+    );
+  }
+
+  final winningHand = winner == PlayerId.one
+      ? resolved.player1Hand
+      : resolved.player2Hand;
+  return RoundSummary(
+    round: resolved.round,
+    player1Hand: resolved.player1Hand,
+    player2Hand: resolved.player2Hand,
+    winner: winner,
+    headline: '${players.of(winner).name} wins Jack-en-Poy!',
+    details: [_beatsPhrase(winningHand)],
+  );
+}

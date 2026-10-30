@@ -228,4 +228,87 @@ void main() {
       );
     });
   });
+
+  group('summarizeTieBreakerRound', () {
+    test('a Player 1 win names the winner and the rule', () {
+      final summary = summarizeTieBreakerRound(const [
+        TieBreakerHandLocked(player: PlayerId.two),
+        TieBreakerRoundResolved(
+          round: 1,
+          player1Hand: Hand.rock,
+          player2Hand: Hand.scissors,
+          winner: PlayerId.one,
+        ),
+        GameWon(winner: PlayerId.one, method: WinMethod.tieBreaker),
+      ], _players);
+
+      expect(summary.headline, 'Ana wins Jack-en-Poy!');
+      expect(summary.details, ['Rock breaks Scissors.']);
+      expect(summary.isDraw, isFalse);
+      expect(summary.winner, PlayerId.one);
+      expect(summary.player1Hand, Hand.rock);
+      expect(summary.player2Hand, Hand.scissors);
+    });
+
+    test('a Player 2 win uses the winning hand for the rule', () {
+      final summary = summarizeTieBreakerRound(const [
+        TieBreakerRoundResolved(
+          round: 3,
+          player1Hand: Hand.paper,
+          player2Hand: Hand.scissors,
+          winner: PlayerId.two,
+        ),
+      ], _players);
+
+      expect(summary.headline, 'Ben wins Jack-en-Poy!');
+      expect(summary.details, ['Scissors cut Paper.']);
+      expect(summary.round, 3);
+    });
+
+    test('every winning hand has its own rule', () {
+      String rule(Hand winning, Hand losing) {
+        return summarizeTieBreakerRound([
+          TieBreakerRoundResolved(
+            round: 1,
+            player1Hand: winning,
+            player2Hand: losing,
+            winner: PlayerId.one,
+          ),
+        ], _players).details.single;
+      }
+
+      expect(rule(Hand.rock, Hand.scissors), 'Rock breaks Scissors.');
+      expect(rule(Hand.paper, Hand.rock), 'Paper covers Rock.');
+      expect(rule(Hand.scissors, Hand.paper), 'Scissors cut Paper.');
+    });
+
+    test('a draw says so and that the round repeats', () {
+      final summary = summarizeTieBreakerRound(const [
+        TieBreakerRoundResolved(
+          round: 2,
+          player1Hand: Hand.paper,
+          player2Hand: Hand.paper,
+          winner: null,
+        ),
+      ], _players);
+
+      expect(summary.headline, 'Draw!');
+      expect(summary.isDraw, isTrue);
+      expect(summary.winner, isNull);
+      expect(summary.details.first, 'Both chose Paper.');
+    });
+
+    test('events without a round are rejected', () {
+      expect(
+        () => summarizeTieBreakerRound(const [], _players),
+        throwsA(isA<StateError>()),
+      );
+    });
+
+    test('handName gives display names', () {
+      expect(handName(Hand.rock), 'Rock');
+      expect(handName(Hand.paper), 'Paper');
+      expect(handName(Hand.scissors), 'Scissors');
+    });
+  });
 }

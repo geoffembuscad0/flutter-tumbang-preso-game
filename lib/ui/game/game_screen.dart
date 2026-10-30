@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:game_tumbang_preso/core/app_theme.dart';
 import 'package:game_tumbang_preso/domain/domain.dart';
 import 'package:game_tumbang_preso/state/game_controller.dart';
+import 'package:game_tumbang_preso/state/tie_breaker_step.dart';
 import 'package:game_tumbang_preso/state/turn_step.dart';
 import 'package:game_tumbang_preso/ui/game/stages/choice_stage.dart';
 import 'package:game_tumbang_preso/ui/game/stages/end_stages.dart';
 import 'package:game_tumbang_preso/ui/game/stages/handoff_stage.dart';
 import 'package:game_tumbang_preso/ui/game/stages/result_stage.dart';
+import 'package:game_tumbang_preso/ui/game/stages/tie_breaker_stages.dart';
 import 'package:game_tumbang_preso/ui/game/stages/throw_stage.dart';
 import 'package:game_tumbang_preso/ui/widgets/sky_background.dart';
 
@@ -67,8 +69,36 @@ class _GameBody extends StatelessWidget {
     // The result of the last response is shown first, even when it ended the
     // game or started the tie-breaker; the screens for those follow it.
     if (step != TurnStep.responseResult) {
-      if (state.phase == GamePhase.tieBreaker) {
-        return (id: 'tie-breaker', child: TieBreakerStage(state: state));
+      // The last round of a decided tie-breaker is still on screen until the
+      // players continue, even though the engine is already finished.
+      final showingLastRound =
+          state.phase == GamePhase.finished &&
+          state.winMethod == WinMethod.tieBreaker &&
+          controller.tieBreakerStep == TieBreakerStep.roundResult;
+
+      if (state.phase == GamePhase.tieBreaker || showingLastRound) {
+        return switch (controller.tieBreakerStep) {
+          TieBreakerStep.handoffFirst => (
+            id: 'tb-handoff-first',
+            child: TieBreakerHandoffStage(controller: controller),
+          ),
+          TieBreakerStep.firstPick => (
+            id: 'tb-pick-first',
+            child: HandPickStage(controller: controller),
+          ),
+          TieBreakerStep.handoffSecond => (
+            id: 'tb-handoff-second',
+            child: TieBreakerHandoffStage(controller: controller),
+          ),
+          TieBreakerStep.secondPick => (
+            id: 'tb-pick-second',
+            child: HandPickStage(controller: controller),
+          ),
+          TieBreakerStep.roundResult => (
+            id: 'tb-result',
+            child: RoundResultStage(controller: controller),
+          ),
+        };
       }
       if (state.phase == GamePhase.finished) {
         return (id: 'finished', child: FinishedStage(state: state));
