@@ -26,8 +26,10 @@ void main() {
     await tester.pump();
 
     expect(gotItButton, findsOneWidget);
-    expect(tester.getRect(gotItButton), 
-        anyOf(isNotNull, isNot(const Rect.fromLTWH(0, 0, 0, 0))));
+    expect(
+      tester.getRect(gotItButton),
+      anyOf(isNotNull, isNot(const Rect.fromLTWH(0, 0, 0, 0))),
+    );
 
     await tester.tap(gotItButton);
     await tester.pump(_transition);

@@ -19,8 +19,10 @@ class _HeroSceneState extends State<HeroScene>
     vsync: this,
     duration: const Duration(milliseconds: 1800),
   );
-  late final Animation<double> _tilt = Tween<double>(begin: -0.05, end: 0.05)
-      .animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+  late final Animation<double> _tilt = Tween<double>(
+    begin: -0.05,
+    end: 0.05,
+  ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
 
   @override
   void didChangeDependencies() {

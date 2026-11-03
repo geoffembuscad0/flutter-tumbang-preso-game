@@ -11,10 +11,7 @@ import 'package:game_tumbang_preso/ui/widgets/chunky_card.dart';
 /// Player 1 and Player 2 must confirm that they are holding the device
 /// before making their private hand selection.
 class TieBreakerHandoffStage extends StatelessWidget {
-  const TieBreakerHandoffStage({
-    super.key,
-    required this.controller,
-  });
+  const TieBreakerHandoffStage({super.key, required this.controller});
 
   final GameController controller;
 
@@ -49,22 +46,14 @@ class TieBreakerHandoffStage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Center(
-            child: Icon(
-              Icons.phone_android_rounded,
-              size: 72,
-            ),
-          ),
+          const Center(child: Icon(Icons.phone_android_rounded, size: 72)),
           const SizedBox(height: 18),
           Semantics(
             liveRegion: true,
             child: Text(
               'Pass the device to $playerName',
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.w900,
-              ),
+              style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w900),
             ),
           ),
           const SizedBox(height: 8),
@@ -72,10 +61,7 @@ class TieBreakerHandoffStage extends StatelessWidget {
             'Make sure the other player is not looking. '
             '$playerName will make a private Jack-en-Poy selection.',
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 16,
-              height: 1.3,
-            ),
+            style: const TextStyle(fontSize: 16, height: 1.3),
           ),
           const SizedBox(height: 22),
           ChunkyButton(
@@ -95,10 +81,7 @@ class TieBreakerHandoffStage extends StatelessWidget {
 /// Only the current player can interact with the selection buttons.
 /// The opponent's selection is never displayed here.
 class HandPickStage extends StatelessWidget {
-  const HandPickStage({
-    super.key,
-    required this.controller,
-  });
+  const HandPickStage({super.key, required this.controller});
 
   final GameController controller;
 
@@ -131,28 +114,19 @@ class HandPickStage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Icon(
-            Icons.sports_martial_arts_rounded,
-            size: 64,
-          ),
+          const Icon(Icons.sports_martial_arts_rounded, size: 64),
           const SizedBox(height: 16),
           Text(
             '$playerName, make your pick!',
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 26,
-              fontWeight: FontWeight.w900,
-            ),
+            style: const TextStyle(fontSize: 26, fontWeight: FontWeight.w900),
           ),
           const SizedBox(height: 8),
           const Text(
             'Choose your hand. Your selection will remain private '
             'until the other player has also chosen.',
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 15,
-              height: 1.3,
-            ),
+            style: TextStyle(fontSize: 15, height: 1.3),
           ),
           const SizedBox(height: 22),
           ChunkyButton(
@@ -185,10 +159,7 @@ class HandPickStage extends StatelessWidget {
 ///
 /// Both hands are revealed only after Player 2 has submitted their selection.
 class RoundResultStage extends StatelessWidget {
-  const RoundResultStage({
-    super.key,
-    required this.controller,
-  });
+  const RoundResultStage({super.key, required this.controller});
 
   final GameController controller;
 
@@ -237,9 +208,7 @@ class RoundResultStage extends StatelessWidget {
         ? 'It’s a draw!'
         : '${state.nameOf(result.winner!)} wins this round!';
 
-    final nextLabel = isFinished
-        ? 'See the winner'
-        : 'Next round';
+    final nextLabel = isFinished ? 'See the winner' : 'Next round';
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -287,10 +256,7 @@ class RoundResultStage extends StatelessWidget {
                   'Both players selected hands of equal strength. '
                   'Another round is needed!',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 15,
-                    height: 1.3,
-                  ),
+                  style: TextStyle(fontSize: 15, height: 1.3),
                 )
               else
                 Text(
@@ -318,10 +284,7 @@ class RoundResultStage extends StatelessWidget {
 
 /// Displays one player's revealed hand after the round resolves.
 class _PlayerHandResult extends StatelessWidget {
-  const _PlayerHandResult({
-    required this.playerName,
-    required this.hand,
-  });
+  const _PlayerHandResult({required this.playerName, required this.hand});
 
   final String playerName;
   final String hand;
@@ -339,17 +302,11 @@ class _PlayerHandResult extends StatelessWidget {
         children: [
           Text(
             playerName,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
-            ),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
           ),
           Text(
             hand,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w900,
-            ),
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
           ),
         ],
       ),

@@ -11,6 +11,8 @@ import 'package:game_tumbang_preso/ui/widgets/chunky_card.dart';
 import 'package:game_tumbang_preso/ui/widgets/coin_side_label.dart';
 import 'package:game_tumbang_preso/ui/widgets/player_id_label.dart';
 import 'package:game_tumbang_preso/ui/widgets/sky_background.dart';
+import 'package:game_tumbang_preso/ui/setup/player_setup_screen.dart';
+
 /*
  Initial coin toss (spec section 4): Player 1 calls Heads or Tails, the
  coin flips, and the result and starting roles are shown before the game
@@ -73,11 +75,22 @@ class _CoinTossScreenState extends State<CoinTossScreen>
   }
 
   void _startGame() {
-    // Replace this screen so Back cannot return to a toss that already
-    // happened.
-    Navigator.of(context).pushReplacement(
+    // Keep a reference to the navigator because this route is replaced.
+    final navigator = Navigator.of(context);
+
+    navigator.pushReplacement(
       MaterialPageRoute<void>(
-        builder: (_) => GameScreen(controller: widget.controller),
+        builder: (_) => GameScreen(
+          controller: widget.controller,
+          onNewGame: () {
+            navigator.pushAndRemoveUntil(
+              MaterialPageRoute<void>(
+                builder: (_) => const PlayerSetupScreen(),
+              ),
+              (route) => route.isFirst,
+            );
+          },
+        ),
       ),
     );
   }

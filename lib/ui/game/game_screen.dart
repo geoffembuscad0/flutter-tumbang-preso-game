@@ -18,7 +18,13 @@ import 'package:game_tumbang_preso/ui/widgets/sky_background.dart';
 /// shared device waits for). The pass-the-device handoff is therefore a state
 /// the controller enforces, not a route the UI happens to push.
 class GameScreen extends StatelessWidget {
-  const GameScreen({super.key, required this.controller});
+  const GameScreen({
+    super.key,
+    required this.controller,
+    required this.onNewGame,
+  });
+
+  final VoidCallback onNewGame;
 
   final GameController controller;
 
@@ -41,7 +47,8 @@ class GameScreen extends StatelessWidget {
                       constraints: const BoxConstraints(maxWidth: 420),
                       child: ListenableBuilder(
                         listenable: controller,
-                        builder: (context, _) => _GameBody(controller),
+                        builder: (context, _) =>
+                            _GameBody(controller, onNewGame: onNewGame),
                       ),
                     ),
                   ),
@@ -56,9 +63,10 @@ class GameScreen extends StatelessWidget {
 }
 
 class _GameBody extends StatelessWidget {
-  const _GameBody(this.controller);
+  const _GameBody(this.controller, {required this.onNewGame});
 
   final GameController controller;
+  final VoidCallback onNewGame;
 
   /// The stage to show, with an id that stays the same while a stage only
   /// changes internally (so its animation is not restarted).
@@ -101,7 +109,10 @@ class _GameBody extends StatelessWidget {
         };
       }
       if (state.phase == GamePhase.finished) {
-        return (id: 'finished', child: FinishedStage(state: state));
+        return (
+          id: 'finished',
+          child: FinishedStage(state: state, onNewGame: onNewGame),
+        );
       }
     }
 

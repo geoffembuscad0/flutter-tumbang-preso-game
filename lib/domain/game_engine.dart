@@ -18,6 +18,7 @@ class InvalidGameActionException implements Exception {
   @override
   String toString() => 'InvalidGameActionException: $message';
 }
+
 /*
 /// The rules of Tumbang Preso, with no UI and no hidden randomness.
 ///

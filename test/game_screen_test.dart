@@ -51,7 +51,7 @@ Future<void> _pumpGame(WidgetTester tester, GameController controller) {
   return tester.pumpWidget(
     MaterialApp(
       theme: buildAppTheme(),
-      home: GameScreen(controller: controller),
+      home: GameScreen(controller: controller, onNewGame: () {}),
     ),
   );
 }

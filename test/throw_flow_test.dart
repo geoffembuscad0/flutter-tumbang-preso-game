@@ -39,7 +39,7 @@ Future<void> _pump(
               child: child!,
             )
           : null,
-      home: GameScreen(controller: controller),
+      home: GameScreen(controller: controller, onNewGame: () {}),
     ),
   );
 }

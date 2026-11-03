@@ -5,6 +5,7 @@ import 'package:game_tumbang_preso/core/app_theme.dart';
 import 'package:game_tumbang_preso/domain/domain.dart';
 
 const _coinInner = Color(0xFFFFE680);
+
 /*
 One side of the coin, drawn with styled circles. A null [side] shows a
 question mark, for before the toss.
@@ -53,6 +54,7 @@ class CoinFace extends StatelessWidget {
     );
   }
 }
+
 /*
 A coin turning end over end.
 

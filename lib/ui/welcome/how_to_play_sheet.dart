@@ -31,9 +31,8 @@ class _HowToPlayContent extends StatelessWidget {
         children: [
           Text(
             'How to play',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.w900,
-            ),
+            style: Theme.of(context).textTheme.headlineSmall
+                ?.copyWith(fontWeight: FontWeight.w900),
           ),
           const SizedBox(height: 20),
           const _Rule(
