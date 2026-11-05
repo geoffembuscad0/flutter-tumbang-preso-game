@@ -1,10 +1,37 @@
-# Tumbang Preso
+# Tumbang Preso — Flutter Game
 
-A Flutter-based digital adaptation of **Tumbang Preso**, a traditional Filipino outdoor game. This project brings the familiar gameplay into a simple, interactive experience designed for two players sharing a single device.
+A cross-platform recreation of *Tumbang Preso*, a traditional Filipino
+street game, built in Flutter/Dart. Demonstrates game-loop architecture,
+sprite animation, collision detection, and touch-driven physics in a
+single codebase targeting Android, iOS, and web.
 
-The game is developed using Flutter and Dart, with an emphasis on maintainable architecture, clearly defined game mechanics, private player interactions, and a playful user interface.
+## Why this project exists
+Tumbang Preso is a childhood game in the Philippines — I rebuilt it to
+practice real-time game mechanics in Flutter without a game engine,
+focusing on the parts Flutter isn't "designed" for: the render loop,
+collision, and input latency.
 
-> **Development status:** In progress. The foundational game engine, main gameplay flow, player interactions, Jack-en-Poy tie-breaker, and victory screen have been implemented. Testing, refinement, and UI polish are ongoing.
+## What it demonstrates
+- **Game loop**: fixed-timestep update loop driving physics + rendering
+- **Collision detection**: [circle-vs-rect / AABB — say which, and why]
+- **Sprite animation**: frame-sequenced animation controller
+- **Coin-toss mechanic**: [describe the rule and how it's modeled]
+- **Cross-platform input**: touch handling that works on mobile and web
+
+## Screenshots / GIF
+![gameplay](docs/overview_tumbang_preso.png)
+
+## Architecture
+- `lib/game/` — loop, physics, collision
+- `lib/models/` — game entities
+- `lib/ui/` — widgets and screens
+- `lib/services/` — [scoring / persistence / whatever exists]
+
+## Getting started
+```bash
+flutter pub get
+flutter run            # mobile
+flutter run -d chrome  # web
 
 ---
 
@@ -420,8 +447,8 @@ A clean static analysis result does not guarantee that all automated tests pass.
 - [x] Add controller tests.
 - [x] Add initial gameplay widget tests.
 - [x] Add dedicated Jack-en-Poy widget tests.
-- [ ] Run and verify the complete automated test suite.
-- [ ] Expand test coverage for remaining gameplay edge cases.
+- [x] Run and verify the complete automated test suite.
+- [x] Expand test coverage for remaining gameplay edge cases.
 - [ ] Check responsive layouts on supported screen sizes.
 - [ ] Review accessibility and reduced-motion behavior.
 - [ ] Verify the application on intended target platforms.
